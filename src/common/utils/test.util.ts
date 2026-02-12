@@ -16,6 +16,7 @@ export const repositoryMockFactory = <T = any>(): MockRepository<T> => ({
   remove: jest.fn((entity) => entity),
   count: jest.fn((entity) => entity),
   delete: jest.fn((entity) => entity),
+  update: jest.fn((entity) => entity),
   createQueryBuilder: jest.fn(() => ({
     select: jest.fn().mockReturnThis(),
     where: jest.fn().mockReturnThis(),
@@ -24,4 +25,16 @@ export const repositoryMockFactory = <T = any>(): MockRepository<T> => ({
     getRawMany: jest.fn().mockResolvedValue([]),
     getRawOne: jest.fn().mockResolvedValue(null),
   })),
+});
+
+export type MockCacheManager = {
+  get: jest.Mock;
+  set: jest.Mock;
+  del: jest.Mock;
+};
+
+export const cacheManagerMockFactory = (): MockCacheManager => ({
+  get: jest.fn().mockResolvedValue(null),
+  set: jest.fn().mockResolvedValue(undefined),
+  del: jest.fn().mockResolvedValue(undefined),
 });

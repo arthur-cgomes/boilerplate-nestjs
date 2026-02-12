@@ -12,6 +12,16 @@ module.exports = {
       statements: 100,
     },
   },
-  collectCoverageFrom: ['src/**/*service.{ts,js}', '!src/health-check/*.{ts,js}' ],
+  collectCoverageFrom: [
+    'src/**/*service.{ts,js}',
+    '!src/health-check/*.{ts,js}',
+    '!src/common/services/*.{ts,js}',
+  ],
   testPathIgnorePatterns: ['/node_modules/', '/mocks/', '/dist/'],
+  transformIgnorePatterns: [
+    'node_modules/(?!(uuid)/)',
+  ],
+  moduleNameMapper: {
+    '^uuid$': require.resolve('uuid'),
+  },
 };

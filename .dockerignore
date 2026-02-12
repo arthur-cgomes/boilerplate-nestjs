@@ -1,0 +1,49 @@
+# Dependencies
+node_modules
+npm-debug.log
+
+# Build output
+dist
+
+# Git
+.git
+.gitignore
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Test files
+coverage
+__tests__
+*.spec.ts
+*.test.ts
+jest.config.js
+
+# Documentation
+*.md
+!README.md
+
+# Docker
+Dockerfile
+docker-compose*.yml
+.dockerignore
+
+# Logs
+logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Claude
+CLAUDE.md
+.claude
