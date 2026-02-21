@@ -29,13 +29,16 @@ import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { RequestPasswordResetDto } from './dto/request-password-reset.dto';
 import { ConfirmPasswordResetDto } from './dto/confirm-password-reset.dto';
 import { SocialLoginDto } from './dto/social-login.dto';
-import { CurrentUser } from '../common/decorators';
+import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
-import { APP_CONSTANTS, SUCCESS_MESSAGES } from '../common/constants';
+import {
+  APP_CONSTANTS,
+  SUCCESS_MESSAGES,
+} from '../common/constants/app.constants';
 import {
   MessageResponseDto,
   PasswordResetRequestResponseDto,
-} from '../common/dto';
+} from '../common/dto/message-response.dto';
 
 @ApiTags('Auth')
 @Controller('auth')

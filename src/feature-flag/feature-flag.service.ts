@@ -15,7 +15,7 @@ import { CreateFeatureFlagDto } from './dto/create-feature-flag.dto';
 import { UpdateFeatureFlagDto } from './dto/update-feature-flag.dto';
 import { GetAllResponseDto } from '../common/dto/get-all.dto';
 import { FeatureFlagContext } from './interfaces/feature-flag-context.interface';
-import { APP_CONSTANTS } from '../common/constants';
+import { APP_CONSTANTS } from '../common/constants/app.constants';
 
 const CACHE_PREFIX = 'feature_flag:';
 

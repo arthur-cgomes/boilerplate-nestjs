@@ -1,7 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsEnum, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
-import { APP_CONSTANTS } from '../constants';
+import { APP_CONSTANTS } from '../constants/app.constants';
 import { SortOrder } from '../enum/sort-order.enum';
 
 export class PaginationDto {

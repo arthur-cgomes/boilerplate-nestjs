@@ -1,9 +1,8 @@
 {
   "info": {
-    "_postman_id": "boilerplate-nestjs-api",
-    "name": "Boilerplate NestJS API",
-    "description": "Coleção completa de endpoints para o Boilerplate NestJS com autenticação JWT, gerenciamento de usuários, feature flags, upload de arquivos e logs de auditoria.",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    "name": "Boilerplate NestJS",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Complete API collection for the NestJS Boilerplate. Includes all endpoints organized by module with authentication support."
   },
   "variable": [
     {
@@ -27,7 +26,7 @@
       "name": "Health Check",
       "item": [
         {
-          "name": "Health Check",
+          "name": "Check Application Health",
           "request": {
             "method": "GET",
             "header": [],
@@ -36,9 +35,8 @@
               "host": ["{{baseUrl}}"],
               "path": ["health-check"]
             },
-            "description": "Verifica se a aplicação está funcionando corretamente."
-          },
-          "response": []
+            "description": "Returns the application health status including database and Redis connectivity."
+          }
         }
       ]
     },
@@ -52,10 +50,10 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "if (pm.response.code === 201) {",
-                  "    var jsonData = pm.response.json();",
-                  "    pm.collectionVariables.set('accessToken', jsonData.accessToken);",
-                  "    pm.collectionVariables.set('refreshToken', jsonData.refreshToken);",
+                  "var response = pm.response.json();",
+                  "if (response.data) {",
+                  "  pm.collectionVariables.set('accessToken', response.data.accessToken);",
+                  "  pm.collectionVariables.set('refreshToken', response.data.refreshToken);",
                   "}"
                 ],
                 "type": "text/javascript"
@@ -65,23 +63,19 @@
           "request": {
             "method": "POST",
             "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
+              { "key": "Content-Type", "value": "application/json" }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"usuario@email.com\",\n  \"password\": \"SenhaSegura@123\"\n}"
+              "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"Admin@123\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/auth/login",
               "host": ["{{baseUrl}}"],
               "path": ["auth", "login"]
             },
-            "description": "Autentica o usuário e retorna tokens de acesso."
-          },
-          "response": []
+            "description": "Authenticates the user with email and password. Automatically saves the accessToken and refreshToken to collection variables."
+          }
         },
         {
           "name": "Refresh Token",
@@ -90,10 +84,10 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "if (pm.response.code === 201) {",
-                  "    var jsonData = pm.response.json();",
-                  "    pm.collectionVariables.set('accessToken', jsonData.accessToken);",
-                  "    pm.collectionVariables.set('refreshToken', jsonData.refreshToken);",
+                  "var response = pm.response.json();",
+                  "if (response.data) {",
+                  "  pm.collectionVariables.set('accessToken', response.data.accessToken);",
+                  "  pm.collectionVariables.set('refreshToken', response.data.refreshToken);",
                   "}"
                 ],
                 "type": "text/javascript"
@@ -103,10 +97,7 @@
           "request": {
             "method": "POST",
             "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
+              { "key": "Content-Type", "value": "application/json" }
             ],
             "body": {
               "mode": "raw",
@@ -117,103 +108,110 @@
               "host": ["{{baseUrl}}"],
               "path": ["auth", "refresh"]
             },
-            "description": "Renova os tokens de acesso usando o refresh token."
-          },
-          "response": []
+            "description": "Generates a new access token using the refresh token. Automatically updates collection variables."
+          }
         },
         {
           "name": "Logout",
           "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{accessToken}}",
-                  "type": "string"
-                }
-              ]
-            },
             "method": "POST",
-            "header": [],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
             "url": {
               "raw": "{{baseUrl}}/auth/logout",
               "host": ["{{baseUrl}}"],
               "path": ["auth", "logout"]
             },
-            "description": "Encerra a sessão atual do usuário."
-          },
-          "response": []
+            "description": "Revokes all refresh tokens and invalidates the current access token."
+          }
         },
         {
-          "name": "Logout All Sessions",
+          "name": "Logout All Devices",
           "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{accessToken}}",
-                  "type": "string"
-                }
-              ]
-            },
             "method": "POST",
-            "header": [],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
             "url": {
               "raw": "{{baseUrl}}/auth/logout-all",
               "host": ["{{baseUrl}}"],
               "path": ["auth", "logout-all"]
             },
-            "description": "Encerra todas as sessões do usuário em todos os dispositivos."
-          },
-          "response": []
+            "description": "Revokes all refresh tokens for the user across all devices."
+          }
         },
         {
           "name": "Request Password Reset",
           "request": {
             "method": "POST",
             "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
+              { "key": "Content-Type", "value": "application/json" }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"usuario@email.com\"\n}"
+              "raw": "{\n  \"email\": \"user@example.com\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/auth/password/request-reset",
               "host": ["{{baseUrl}}"],
               "path": ["auth", "password", "request-reset"]
             },
-            "description": "Solicita um token para resetar a senha do usuário."
-          },
-          "response": []
+            "description": "Sends a password reset token to the user's email. Limited to 3 attempts per minute."
+          }
         },
         {
           "name": "Confirm Password Reset",
           "request": {
             "method": "POST",
             "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
+              { "key": "Content-Type", "value": "application/json" }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"token\": \"reset-token-here\",\n  \"newPassword\": \"NovaSenha@456\"\n}"
+              "raw": "{\n  \"token\": \"reset-token-received-by-email\",\n  \"newPassword\": \"NewPassword@123\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/auth/password/confirm-reset",
               "host": ["{{baseUrl}}"],
               "path": ["auth", "password", "confirm-reset"]
             },
-            "description": "Confirma o reset de senha usando o token recebido por email."
-          },
-          "response": []
+            "description": "Confirms the password change using the token received by email. Limited to 5 attempts per minute."
+          }
+        },
+        {
+          "name": "Social Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var response = pm.response.json();",
+                  "if (response.data) {",
+                  "  pm.collectionVariables.set('accessToken', response.data.accessToken);",
+                  "  pm.collectionVariables.set('refreshToken', response.data.refreshToken);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"accessToken\": \"supabase-access-token-from-frontend\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/social",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "social"]
+            },
+            "description": "Authenticates the user using a Supabase access token obtained after social login (Google, GitHub, etc.) in the frontend."
+          }
         }
       ]
     },
@@ -225,104 +223,77 @@
           "request": {
             "method": "POST",
             "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
+              { "key": "Content-Type", "value": "application/json" }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"novousuario@email.com\",\n  \"password\": \"SenhaSegura@123\",\n  \"name\": \"Novo Usuário\"\n}"
+              "raw": "{\n  \"email\": \"newuser@example.com\",\n  \"password\": \"SecurePass@123\",\n  \"name\": \"New User\",\n  \"userType\": \"user\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/user",
               "host": ["{{baseUrl}}"],
               "path": ["user"]
             },
-            "description": "Cria um novo usuário no sistema."
-          },
-          "response": []
-        },
-        {
-          "name": "Get Current User",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{accessToken}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/user/me",
-              "host": ["{{baseUrl}}"],
-              "path": ["user", "me"]
-            },
-            "description": "Retorna os dados do usuário autenticado."
-          },
-          "response": []
+            "description": "Creates a new user account. No authentication required."
+          }
         },
         {
           "name": "Update Current User",
           "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{accessToken}}",
-                  "type": "string"
-                }
-              ]
-            },
             "method": "PUT",
             "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Nome Atualizado\"\n}"
+              "raw": "{\n  \"name\": \"Updated Name\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/user/me",
               "host": ["{{baseUrl}}"],
               "path": ["user", "me"]
             },
-            "description": "Atualiza os dados do usuário autenticado."
-          },
-          "response": []
+            "description": "Updates the currently authenticated user's profile."
+          }
         },
         {
-          "name": "Delete Current User",
+          "name": "Update User by ID",
           "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{accessToken}}",
-                  "type": "string"
-                }
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Name\",\n  \"userType\": \"global\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/user/:userId",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", ":userId"],
+              "variable": [
+                { "key": "userId", "value": "user-uuid-here" }
               ]
             },
-            "method": "DELETE",
-            "header": [],
+            "description": "Updates a user by ID. Requires ADMIN role."
+          }
+        },
+        {
+          "name": "Get Current User",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
             "url": {
               "raw": "{{baseUrl}}/user/me",
               "host": ["{{baseUrl}}"],
               "path": ["user", "me"]
             },
-            "description": "Remove a conta do usuário autenticado."
-          },
-          "response": []
+            "description": "Returns the profile of the currently authenticated user."
+          }
         },
         {
           "name": "Get User by ID",
@@ -334,15 +305,11 @@
               "host": ["{{baseUrl}}"],
               "path": ["user", ":userId"],
               "variable": [
-                {
-                  "key": "userId",
-                  "value": "uuid-do-usuario"
-                }
+                { "key": "userId", "value": "user-uuid-here" }
               ]
             },
-            "description": "Retorna os dados de um usuário pelo ID."
-          },
-          "response": []
+            "description": "Returns a user's public profile by ID. No authentication required."
+          }
         },
         {
           "name": "List Users",
@@ -350,109 +317,52 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/user?take=10&skip=0&search=&sort=createdAt&order=DESC",
+              "raw": "{{baseUrl}}/user?take=10&skip=0&sort=createdAt&order=DESC",
               "host": ["{{baseUrl}}"],
               "path": ["user"],
               "query": [
-                {
-                  "key": "take",
-                  "value": "10",
-                  "description": "Quantidade de registros por página"
-                },
-                {
-                  "key": "skip",
-                  "value": "0",
-                  "description": "Quantidade de registros a pular"
-                },
-                {
-                  "key": "search",
-                  "value": "",
-                  "description": "Termo de busca no nome"
-                },
-                {
-                  "key": "sort",
-                  "value": "createdAt",
-                  "description": "Campo para ordenação"
-                },
-                {
-                  "key": "order",
-                  "value": "DESC",
-                  "description": "Direção da ordenação (ASC ou DESC)"
-                }
+                { "key": "take", "value": "10", "description": "Number of records per page (max 100)" },
+                { "key": "skip", "value": "0", "description": "Number of records to skip" },
+                { "key": "search", "value": "", "description": "Search by name or email", "disabled": true },
+                { "key": "sort", "value": "createdAt", "description": "Field to sort by" },
+                { "key": "order", "value": "DESC", "description": "Sort direction: ASC or DESC" }
               ]
             },
-            "description": "Lista usuários com paginação e filtros."
-          },
-          "response": []
+            "description": "Returns a paginated list of all users. Supports search, sorting and pagination."
+          }
         },
         {
-          "name": "Update User by ID (Admin)",
+          "name": "Delete Current User",
           "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{accessToken}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Nome Atualizado\",\n  \"userType\": \"admin\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/user/:userId",
-              "host": ["{{baseUrl}}"],
-              "path": ["user", ":userId"],
-              "variable": [
-                {
-                  "key": "userId",
-                  "value": "uuid-do-usuario"
-                }
-              ]
-            },
-            "description": "Atualiza os dados de um usuário pelo ID (requer permissão de admin)."
-          },
-          "response": []
-        },
-        {
-          "name": "Delete User by ID (Admin)",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{accessToken}}",
-                  "type": "string"
-                }
-              ]
-            },
             "method": "DELETE",
-            "header": [],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/user/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "me"]
+            },
+            "description": "Soft deletes the currently authenticated user's account."
+          }
+        },
+        {
+          "name": "Delete User by ID",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
             "url": {
               "raw": "{{baseUrl}}/user/:userId",
               "host": ["{{baseUrl}}"],
               "path": ["user", ":userId"],
               "variable": [
-                {
-                  "key": "userId",
-                  "value": "uuid-do-usuario"
-                }
+                { "key": "userId", "value": "user-uuid-here" }
               ]
             },
-            "description": "Remove um usuário pelo ID (requer permissão de admin)."
-          },
-          "response": []
+            "description": "Soft deletes a user by ID. Requires ADMIN role."
+          }
         }
       ]
     },
@@ -460,254 +370,153 @@
       "name": "Feature Flags",
       "item": [
         {
-          "name": "Check Single Flag",
+          "name": "Create Feature Flag",
           "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{accessToken}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/feature-flags/check/:key",
-              "host": ["{{baseUrl}}"],
-              "path": ["feature-flags", "check", ":key"],
-              "variable": [
-                {
-                  "key": "key",
-                  "value": "new_dashboard"
-                }
-              ]
-            },
-            "description": "Verifica se uma feature flag específica está habilitada para o usuário."
-          },
-          "response": []
-        },
-        {
-          "name": "Check All Flags",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{accessToken}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/feature-flags/check",
-              "host": ["{{baseUrl}}"],
-              "path": ["feature-flags", "check"]
-            },
-            "description": "Retorna o status de todas as feature flags para o usuário."
-          },
-          "response": []
-        },
-        {
-          "name": "List Feature Flags (Admin)",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{accessToken}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/feature-flags?take=20&skip=0",
-              "host": ["{{baseUrl}}"],
-              "path": ["feature-flags"],
-              "query": [
-                {
-                  "key": "take",
-                  "value": "20"
-                },
-                {
-                  "key": "skip",
-                  "value": "0"
-                }
-              ]
-            },
-            "description": "Lista todas as feature flags (requer permissão de admin/global)."
-          },
-          "response": []
-        },
-        {
-          "name": "Get Feature Flag by ID (Admin)",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{accessToken}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/feature-flags/:id",
-              "host": ["{{baseUrl}}"],
-              "path": ["feature-flags", ":id"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "uuid-da-feature-flag"
-                }
-              ]
-            },
-            "description": "Retorna os detalhes de uma feature flag pelo ID."
-          },
-          "response": []
-        },
-        {
-          "name": "Create Feature Flag (Admin)",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{accessToken}}",
-                  "type": "string"
-                }
-              ]
-            },
             "method": "POST",
             "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"key\": \"new_feature\",\n  \"name\": \"Nova Funcionalidade\",\n  \"description\": \"Descrição da nova funcionalidade\",\n  \"active\": false,\n  \"rolloutPercentage\": 50,\n  \"allowedUserTypes\": [\"admin\", \"global\"]\n}"
+              "raw": "{\n  \"key\": \"new_feature\",\n  \"name\": \"New Feature\",\n  \"description\": \"Description of the new feature\",\n  \"active\": false,\n  \"rolloutPercentage\": 100,\n  \"allowedUserTypes\": [\"admin\", \"global\"]\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/feature-flags",
               "host": ["{{baseUrl}}"],
               "path": ["feature-flags"]
             },
-            "description": "Cria uma nova feature flag (requer permissão de admin)."
-          },
-          "response": []
+            "description": "Creates a new feature flag. Requires ADMIN role."
+          }
         },
         {
-          "name": "Update Feature Flag (Admin)",
+          "name": "Toggle Feature Flag",
           "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{accessToken}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"active\": true,\n  \"rolloutPercentage\": 100\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/feature-flags/:id",
-              "host": ["{{baseUrl}}"],
-              "path": ["feature-flags", ":id"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "uuid-da-feature-flag"
-                }
-              ]
-            },
-            "description": "Atualiza uma feature flag existente (requer permissão de admin)."
-          },
-          "response": []
-        },
-        {
-          "name": "Toggle Feature Flag (Admin)",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{accessToken}}",
-                  "type": "string"
-                }
-              ]
-            },
             "method": "POST",
-            "header": [],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
             "url": {
               "raw": "{{baseUrl}}/feature-flags/:id/toggle",
               "host": ["{{baseUrl}}"],
               "path": ["feature-flags", ":id", "toggle"],
               "variable": [
-                {
-                  "key": "id",
-                  "value": "uuid-da-feature-flag"
-                }
+                { "key": "id", "value": "feature-flag-uuid-here" }
               ]
             },
-            "description": "Alterna o status de uma feature flag (liga/desliga)."
-          },
-          "response": []
+            "description": "Toggles the active status of a feature flag. Requires ADMIN role."
+          }
         },
         {
-          "name": "Delete Feature Flag (Admin)",
+          "name": "Update Feature Flag",
           "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{accessToken}}",
-                  "type": "string"
-                }
-              ]
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Feature Name\",\n  \"description\": \"Updated description\",\n  \"active\": true,\n  \"rolloutPercentage\": 50\n}"
             },
-            "method": "DELETE",
-            "header": [],
             "url": {
               "raw": "{{baseUrl}}/feature-flags/:id",
               "host": ["{{baseUrl}}"],
               "path": ["feature-flags", ":id"],
               "variable": [
-                {
-                  "key": "id",
-                  "value": "uuid-da-feature-flag"
-                }
+                { "key": "id", "value": "feature-flag-uuid-here" }
               ]
             },
-            "description": "Remove uma feature flag (requer permissão de admin)."
-          },
-          "response": []
+            "description": "Updates an existing feature flag. Requires ADMIN role."
+          }
+        },
+        {
+          "name": "Check Feature Flag by Key",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/feature-flags/check/:key",
+              "host": ["{{baseUrl}}"],
+              "path": ["feature-flags", "check", ":key"],
+              "variable": [
+                { "key": "key", "value": "new_feature" }
+              ]
+            },
+            "description": "Checks whether a specific feature flag is active for the current user."
+          }
+        },
+        {
+          "name": "Check All Feature Flags",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/feature-flags/check",
+              "host": ["{{baseUrl}}"],
+              "path": ["feature-flags", "check"]
+            },
+            "description": "Returns the status of all feature flags for the current user."
+          }
+        },
+        {
+          "name": "List Feature Flags",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/feature-flags?take=10&skip=0",
+              "host": ["{{baseUrl}}"],
+              "path": ["feature-flags"],
+              "query": [
+                { "key": "take", "value": "10", "description": "Number of records per page" },
+                { "key": "skip", "value": "0", "description": "Number of records to skip" }
+              ]
+            },
+            "description": "Returns a paginated list of all feature flags. Requires ADMIN or GLOBAL role."
+          }
+        },
+        {
+          "name": "Get Feature Flag by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/feature-flags/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["feature-flags", ":id"],
+              "variable": [
+                { "key": "id", "value": "feature-flag-uuid-here" }
+              ]
+            },
+            "description": "Returns a feature flag by ID. Requires ADMIN or GLOBAL role."
+          }
+        },
+        {
+          "name": "Delete Feature Flag",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/feature-flags/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["feature-flags", ":id"],
+              "variable": [
+                { "key": "id", "value": "feature-flag-uuid-here" }
+              ]
+            },
+            "description": "Deletes a feature flag by ID. Requires ADMIN role."
+          }
         }
       ]
     },
@@ -717,26 +526,14 @@
         {
           "name": "Upload Single File",
           "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{accessToken}}",
-                  "type": "string"
-                }
-              ]
-            },
             "method": "POST",
-            "header": [],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
             "body": {
               "mode": "formdata",
               "formdata": [
-                {
-                  "key": "file",
-                  "type": "file",
-                  "src": ""
-                }
+                { "key": "file", "type": "file", "src": "", "description": "File to upload" }
               ]
             },
             "url": {
@@ -744,40 +541,24 @@
               "host": ["{{baseUrl}}"],
               "path": ["files", "upload"],
               "query": [
-                {
-                  "key": "folder",
-                  "value": "avatars",
-                  "description": "Pasta de destino (opcional)"
-                }
+                { "key": "folder", "value": "avatars", "description": "Folder name in storage (optional)" }
               ]
             },
-            "description": "Faz upload de um único arquivo."
-          },
-          "response": []
+            "description": "Uploads a single file to Supabase Storage. Returns the file record with public URL."
+          }
         },
         {
           "name": "Upload Multiple Files",
           "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{accessToken}}",
-                  "type": "string"
-                }
-              ]
-            },
             "method": "POST",
-            "header": [],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
             "body": {
               "mode": "formdata",
               "formdata": [
-                {
-                  "key": "files",
-                  "type": "file",
-                  "src": ""
-                }
+                { "key": "files", "type": "file", "src": "", "description": "File 1" },
+                { "key": "files", "type": "file", "src": "", "description": "File 2" }
               ]
             },
             "url": {
@@ -785,147 +566,87 @@
               "host": ["{{baseUrl}}"],
               "path": ["files", "upload", "multiple"],
               "query": [
-                {
-                  "key": "folder",
-                  "value": "documents",
-                  "description": "Pasta de destino (opcional)"
-                }
+                { "key": "folder", "value": "documents", "description": "Folder name in storage (optional)" }
               ]
             },
-            "description": "Faz upload de múltiplos arquivos (máximo 10)."
-          },
-          "response": []
+            "description": "Uploads multiple files (max 10) to Supabase Storage. Returns an array of file records."
+          }
         },
         {
           "name": "List User Files",
           "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{accessToken}}",
-                  "type": "string"
-                }
-              ]
-            },
             "method": "GET",
-            "header": [],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
             "url": {
               "raw": "{{baseUrl}}/files?take=10&skip=0",
               "host": ["{{baseUrl}}"],
               "path": ["files"],
               "query": [
-                {
-                  "key": "take",
-                  "value": "10"
-                },
-                {
-                  "key": "skip",
-                  "value": "0"
-                }
+                { "key": "take", "value": "10", "description": "Number of records per page" },
+                { "key": "skip", "value": "0", "description": "Number of records to skip" }
               ]
             },
-            "description": "Lista os arquivos do usuário autenticado."
-          },
-          "response": []
+            "description": "Returns a paginated list of files uploaded by the current user."
+          }
         },
         {
           "name": "Get File by ID",
           "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{accessToken}}",
-                  "type": "string"
-                }
-              ]
-            },
             "method": "GET",
-            "header": [],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
             "url": {
-              "raw": "{{baseUrl}}/files/:fileId",
+              "raw": "{{baseUrl}}/files/:id",
               "host": ["{{baseUrl}}"],
-              "path": ["files", ":fileId"],
+              "path": ["files", ":id"],
               "variable": [
-                {
-                  "key": "fileId",
-                  "value": "uuid-do-arquivo"
-                }
+                { "key": "id", "value": "file-uuid-here" }
               ]
             },
-            "description": "Retorna os detalhes de um arquivo pelo ID."
-          },
-          "response": []
+            "description": "Returns a file record by ID."
+          }
         },
         {
           "name": "Get Signed URL",
           "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{accessToken}}",
-                  "type": "string"
-                }
-              ]
-            },
             "method": "GET",
-            "header": [],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
             "url": {
-              "raw": "{{baseUrl}}/files/:fileId/signed-url?expiresIn=3600",
+              "raw": "{{baseUrl}}/files/:id/signed-url?expiresIn=3600",
               "host": ["{{baseUrl}}"],
-              "path": ["files", ":fileId", "signed-url"],
-              "query": [
-                {
-                  "key": "expiresIn",
-                  "value": "3600",
-                  "description": "Tempo de expiração em segundos"
-                }
-              ],
+              "path": ["files", ":id", "signed-url"],
               "variable": [
-                {
-                  "key": "fileId",
-                  "value": "uuid-do-arquivo"
-                }
+                { "key": "id", "value": "file-uuid-here" }
+              ],
+              "query": [
+                { "key": "expiresIn", "value": "3600", "description": "Expiration time in seconds (default: 3600)" }
               ]
             },
-            "description": "Gera uma URL assinada temporária para acesso ao arquivo."
-          },
-          "response": []
+            "description": "Generates a temporary signed URL for private file access."
+          }
         },
         {
           "name": "Delete File",
           "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{accessToken}}",
-                  "type": "string"
-                }
-              ]
-            },
             "method": "DELETE",
-            "header": [],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
             "url": {
-              "raw": "{{baseUrl}}/files/:fileId",
+              "raw": "{{baseUrl}}/files/:id",
               "host": ["{{baseUrl}}"],
-              "path": ["files", ":fileId"],
+              "path": ["files", ":id"],
               "variable": [
-                {
-                  "key": "fileId",
-                  "value": "uuid-do-arquivo"
-                }
+                { "key": "id", "value": "file-uuid-here" }
               ]
             },
-            "description": "Remove um arquivo."
-          },
-          "response": []
+            "description": "Deletes a file from Supabase Storage and removes its record from the database."
+          }
         }
       ]
     },
@@ -933,118 +654,69 @@
       "name": "Audit Log",
       "item": [
         {
-          "name": "List Audit Logs (Admin)",
+          "name": "List Audit Logs",
           "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{accessToken}}",
-                  "type": "string"
-                }
-              ]
-            },
             "method": "GET",
-            "header": [],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
             "url": {
-              "raw": "{{baseUrl}}/audit-log?take=20&skip=0&entityName=User&action=UPDATE",
+              "raw": "{{baseUrl}}/audit-log?take=20&skip=0",
               "host": ["{{baseUrl}}"],
               "path": ["audit-log"],
               "query": [
-                {
-                  "key": "take",
-                  "value": "20"
-                },
-                {
-                  "key": "skip",
-                  "value": "0"
-                },
-                {
-                  "key": "entityName",
-                  "value": "User",
-                  "description": "Nome da entidade (opcional)"
-                },
-                {
-                  "key": "action",
-                  "value": "UPDATE",
-                  "description": "Tipo de ação: CREATE, UPDATE, DELETE (opcional)"
-                }
+                { "key": "take", "value": "20", "description": "Number of records per page" },
+                { "key": "skip", "value": "0", "description": "Number of records to skip" },
+                { "key": "userId", "value": "", "description": "Filter by user ID (UUID)", "disabled": true },
+                { "key": "entityName", "value": "", "description": "Filter by entity name (e.g. User)", "disabled": true },
+                { "key": "entityId", "value": "", "description": "Filter by entity ID (UUID)", "disabled": true },
+                { "key": "action", "value": "", "description": "Filter by action: CREATE, UPDATE, DELETE", "disabled": true },
+                { "key": "startDate", "value": "", "description": "Filter from date (ISO 8601)", "disabled": true },
+                { "key": "endDate", "value": "", "description": "Filter to date (ISO 8601)", "disabled": true }
               ]
             },
-            "description": "Lista os logs de auditoria com filtros (requer permissão de admin/global)."
-          },
-          "response": []
+            "description": "Returns a paginated list of audit logs with optional filters. Requires ADMIN or GLOBAL role."
+          }
         },
         {
-          "name": "Get Entity History (Admin)",
+          "name": "Get Entity History",
           "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{accessToken}}",
-                  "type": "string"
-                }
-              ]
-            },
             "method": "GET",
-            "header": [],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
             "url": {
               "raw": "{{baseUrl}}/audit-log/entity/:entityName/:entityId",
               "host": ["{{baseUrl}}"],
               "path": ["audit-log", "entity", ":entityName", ":entityId"],
               "variable": [
-                {
-                  "key": "entityName",
-                  "value": "User"
-                },
-                {
-                  "key": "entityId",
-                  "value": "uuid-da-entidade"
-                }
+                { "key": "entityName", "value": "User", "description": "Entity name (e.g. User, FeatureFlag)" },
+                { "key": "entityId", "value": "entity-uuid-here", "description": "Entity ID (UUID)" }
               ]
             },
-            "description": "Retorna o histórico de alterações de uma entidade específica."
-          },
-          "response": []
+            "description": "Returns the full change history for a specific entity. Requires ADMIN or GLOBAL role."
+          }
         },
         {
-          "name": "Get User Activity (Admin)",
+          "name": "Get User Activity",
           "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{accessToken}}",
-                  "type": "string"
-                }
-              ]
-            },
             "method": "GET",
-            "header": [],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
             "url": {
               "raw": "{{baseUrl}}/audit-log/user/:userId?take=50",
               "host": ["{{baseUrl}}"],
               "path": ["audit-log", "user", ":userId"],
-              "query": [
-                {
-                  "key": "take",
-                  "value": "50"
-                }
-              ],
               "variable": [
-                {
-                  "key": "userId",
-                  "value": "uuid-do-usuario"
-                }
+                { "key": "userId", "value": "user-uuid-here", "description": "User ID (UUID)" }
+              ],
+              "query": [
+                { "key": "take", "value": "50", "description": "Number of records to return" }
               ]
             },
-            "description": "Retorna as atividades de um usuário específico."
-          },
-          "response": []
+            "description": "Returns all audit log entries for a specific user. Requires ADMIN or GLOBAL role."
+          }
         }
       ]
     }

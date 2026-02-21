@@ -4,7 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { ScheduleModule } from '@nestjs/schedule';
-import { UserThrottlerGuard } from './common/guards';
+import { UserThrottlerGuard } from './common/guards/user-throttler.guard';
 import { CacheModule } from '@nestjs/cache-manager';
 import { WinstonModule } from 'nest-winston';
 import { AuthModule } from './auth/auth.module';
@@ -13,13 +13,11 @@ import { HealthCheckModule } from './health-check/health-check.module';
 import { FileUploadModule } from './file-upload/file-upload.module';
 import { AuditLogModule } from './audit-log/audit-log.module';
 import { FeatureFlagModule } from './feature-flag/feature-flag.module';
-import { GlobalExceptionFilter } from './common/filters';
-import {
-  LoggingInterceptor,
-  TimeoutInterceptor,
-  SensitiveFieldsInterceptor,
-  CorrelationInterceptor,
-} from './common/interceptors';
+import { GlobalExceptionFilter } from './common/filters/http-exception.filter';
+import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
+import { TimeoutInterceptor } from './common/interceptors/timeout.interceptor';
+import { SensitiveFieldsInterceptor } from './common/interceptors/sensitive-fields.interceptor';
+import { CorrelationInterceptor } from './common/interceptors/correlation.interceptor';
 import { CleanupService } from './common/services/cleanup.service';
 import { RefreshToken } from './auth/entity/refresh-token.entity';
 import { PasswordResetToken } from './auth/entity/password-reset-token.entity';
@@ -27,7 +25,7 @@ import { LoginAttempt } from './auth/entity/login-attempt.entity';
 import { envValidationSchema } from './config/env.validation';
 import { winstonConfig } from './config/winston.config';
 import { redisConfig } from './config/redis.config';
-import { APP_CONSTANTS } from './common/constants';
+import { APP_CONSTANTS } from './common/constants/app.constants';
 
 @Module({
   imports: [

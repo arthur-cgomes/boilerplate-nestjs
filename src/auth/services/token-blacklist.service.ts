@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { ConfigService } from '@nestjs/config';
-import { APP_CONSTANTS } from '../../common/constants';
+import { APP_CONSTANTS } from '../../common/constants/app.constants';
 
 @Injectable()
 export class TokenBlacklistService {

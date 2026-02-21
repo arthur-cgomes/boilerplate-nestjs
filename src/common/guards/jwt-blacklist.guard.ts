@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { TokenBlacklistService } from '../../auth/services/token-blacklist.service';
-import { ERROR_MESSAGES } from '../constants';
+import { ERROR_MESSAGES } from '../constants/app.constants';
 
 @Injectable()
 export class JwtBlacklistGuard implements CanActivate {

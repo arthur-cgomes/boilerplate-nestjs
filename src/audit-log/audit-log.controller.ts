@@ -11,7 +11,7 @@ import { AuditLogService } from './audit-log.service';
 import { AuditLogQueryDto } from './dto/audit-log-query.dto';
 import { AuditLog } from './entity/audit-log.entity';
 import { GetAllResponseDto } from '../common/dto/get-all.dto';
-import { Roles } from '../common/decorators';
+import { Roles } from '../common/decorators/roles.decorator';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { UserType } from '../common/enum/user-type.enum';
 

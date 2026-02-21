@@ -12,7 +12,10 @@ import { FindManyOptions, ILike, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { GetAllResponseDto } from '../common/dto/get-all.dto';
-import { ERROR_MESSAGES, APP_CONSTANTS } from '../common/constants';
+import {
+  ERROR_MESSAGES,
+  APP_CONSTANTS,
+} from '../common/constants/app.constants';
 import { AuthProvider } from '../common/enum/auth-provider.enum';
 
 const CACHE_PREFIX = 'user:';

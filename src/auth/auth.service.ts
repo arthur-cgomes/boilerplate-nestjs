@@ -18,7 +18,7 @@ import {
   APP_CONSTANTS,
   ERROR_MESSAGES,
   SUCCESS_MESSAGES,
-} from '../common/constants';
+} from '../common/constants/app.constants';
 import { ConfigService } from '@nestjs/config';
 import { EmailClientService } from '../common/services/email-client.service';
 import { getSupabaseClient } from '../config/supabase.config';

@@ -27,7 +27,7 @@ import {
 describe('UserService', () => {
   let service: UserService;
   let repositoryMock: MockRepository<User>;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   let cacheManagerMock: MockCacheManager;
 
   beforeAll(async () => {

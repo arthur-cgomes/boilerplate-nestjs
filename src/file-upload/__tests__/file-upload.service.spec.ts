@@ -31,7 +31,7 @@ import { getSupabaseClient } from '../../config/supabase.config';
 describe('FileUploadService', () => {
   let service: FileUploadService;
   let repositoryMock: MockRepository<FileRecord>;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   let cacheManagerMock: MockCacheManager;
   let configService: { get: jest.Mock };
   let mockSupabase: {

@@ -14,7 +14,7 @@ import { AuditLogQueryDto } from './dto/audit-log-query.dto';
 import { GetAllResponseDto } from '../common/dto/get-all.dto';
 import { AuditContext } from './interfaces/audit-context.interface';
 import { AuditAction } from './enum/audit-action.enum';
-import { APP_CONSTANTS } from '../common/constants';
+import { APP_CONSTANTS } from '../common/constants/app.constants';
 
 const CACHE_PREFIX = 'audit:';
 
