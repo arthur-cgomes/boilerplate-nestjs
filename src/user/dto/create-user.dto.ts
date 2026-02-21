@@ -7,7 +7,7 @@ import {
   IsString,
 } from 'class-validator';
 import { UserType } from '../../common/enum/user-type.enum';
-import { IsStrongPassword } from '../../common/validators';
+import { IsStrongPassword } from '../../common/validators/password.validator';
 
 export class CreateUserDto {
   @ApiProperty({

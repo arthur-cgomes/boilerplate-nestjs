@@ -12,7 +12,10 @@ import { Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 import { getSupabaseClient } from '../config/supabase.config';
 import { FileRecord } from './entity/file-record.entity';
-import { ERROR_MESSAGES, APP_CONSTANTS } from '../common/constants';
+import {
+  ERROR_MESSAGES,
+  APP_CONSTANTS,
+} from '../common/constants/app.constants';
 import { UploadResult } from './interfaces/upload-result.interface';
 
 const CACHE_PREFIX = 'file:';

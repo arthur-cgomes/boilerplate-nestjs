@@ -31,7 +31,8 @@ import {
 } from './dto/check-feature-flag.dto';
 import { FeatureFlag } from './entity/feature-flag.entity';
 import { GetAllResponseDto } from '../common/dto/get-all.dto';
-import { Roles, CurrentUser } from '../common/decorators';
+import { Roles } from '../common/decorators/roles.decorator';
+import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { UserType } from '../common/enum/user-type.enum';
 import { User } from '../user/entity/user.entity';

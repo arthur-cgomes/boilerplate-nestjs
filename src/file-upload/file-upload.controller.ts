@@ -24,14 +24,14 @@ import {
 } from '@nestjs/swagger';
 import { FileUploadService } from './file-upload.service';
 import { UploadResult } from './interfaces/upload-result.interface';
-import { CurrentUser } from '../common/decorators';
+import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { JwtPayload } from '../auth/interfaces/jwt-payload.interface';
 import {
   FileUploadResponseDto,
   SignedUrlResponseDto,
 } from './dto/upload-file.dto';
 import { FileRecord } from './entity/file-record.entity';
-import { MessageResponseDto } from '../common/dto';
+import { MessageResponseDto } from '../common/dto/message-response.dto';
 
 @ApiTags('File Upload')
 @Controller('files')

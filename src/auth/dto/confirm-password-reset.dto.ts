@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
-import { IsStrongPassword } from '../../common/validators';
+import { IsStrongPassword } from '../../common/validators/password.validator';
 
 export class ConfirmPasswordResetDto {
   @ApiProperty({

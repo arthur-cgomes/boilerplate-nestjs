@@ -1,4 +1,4 @@
-import { UserType } from '../../common/enum';
+import { UserType } from '../../common/enum/user-type.enum';
 
 export interface FeatureFlagContext {
   userId?: string;

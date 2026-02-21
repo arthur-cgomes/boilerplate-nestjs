@@ -31,8 +31,9 @@ import { User } from './entity/user.entity';
 import { GetAllResponseDto } from '../common/dto/get-all.dto';
 import { PaginationDto } from '../common/dto/pagination.dto';
 import { DeleteResponseDto } from '../common/dto/delete-response.dto';
-import { CurrentUser, Roles } from '../common/decorators';
-import { RolesGuard } from '../common/guards';
+import { CurrentUser } from '../common/decorators/current-user.decorator';
+import { Roles } from '../common/decorators/roles.decorator';
+import { RolesGuard } from '../common/guards/roles.guard';
 import { JwtPayload } from '../auth/interfaces/jwt-payload.interface';
 import { UserType } from '../common/enum/user-type.enum';
 

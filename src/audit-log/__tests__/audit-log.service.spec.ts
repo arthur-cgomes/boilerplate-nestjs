@@ -25,7 +25,7 @@ import {
 describe('AuditLogService', () => {
   let service: AuditLogService;
   let repositoryMock: MockRepository<AuditLog>;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   let cacheManagerMock: MockCacheManager;
 
   beforeAll(async () => {

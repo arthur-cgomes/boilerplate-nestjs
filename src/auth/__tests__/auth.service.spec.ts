@@ -30,7 +30,7 @@ import {
   mockRefreshToken,
   mockPasswordResetToken,
 } from './mocks/auth.mock';
-import { SUCCESS_MESSAGES } from '../../common/constants';
+import { SUCCESS_MESSAGES } from '../../common/constants/app.constants';
 
 jest.mock('../../config/supabase.config', () => ({
   getSupabaseClient: jest.fn(),
